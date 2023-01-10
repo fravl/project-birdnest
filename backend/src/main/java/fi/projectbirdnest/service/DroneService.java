@@ -1,9 +1,7 @@
 package fi.projectbirdnest.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import fi.projectbirdnest.model.Drone;
 import lombok.RequiredArgsConstructor;
@@ -11,8 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,7 +20,7 @@ public class DroneService {
 
     public List<Drone> getDrones() throws JsonProcessingException {
         String apiResponse = getDroneSnapshot();
-        return extractDrones(apiResponse);
+        return extractDroneList(apiResponse);
     }
 
     private String getDroneSnapshot() {
@@ -33,7 +29,7 @@ public class DroneService {
         return response.getBody();
     }
 
-    private List<Drone> extractDrones(String droneReport) throws JsonProcessingException {
+    private List<Drone> extractDroneList(String droneReport) throws JsonProcessingException {
         XmlMapper objectMapper = new XmlMapper();
         JsonNode body = objectMapper.readTree(droneReport);
         JsonNode drones = body.get("capture").get("drone");

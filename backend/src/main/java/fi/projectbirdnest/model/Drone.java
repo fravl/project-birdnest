@@ -5,7 +5,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import lombok.*;
 
-import java.math.BigDecimal;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
@@ -19,9 +18,9 @@ public class Drone {
     private String serialNumber;
 
     @Column(name = "position_y")
-    private BigDecimal positionY;
+    private double positionY;
 
     @Column(name = "position_x")
-    private BigDecimal positionX;
+    private double positionX;
 
 }

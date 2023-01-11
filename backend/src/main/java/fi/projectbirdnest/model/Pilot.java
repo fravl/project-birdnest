@@ -5,11 +5,15 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
+@Setter
 public class Pilot {
     @Id
     @Column(name = "pilot_id")
@@ -22,8 +26,8 @@ public class Pilot {
     private String lastName;
 
     @Column(name = "phone_number")
-    private final String phoneNumber;
+    private String phoneNumber;
 
     @Column(name = "email")
-    private final String email;
+    private String email;
 }

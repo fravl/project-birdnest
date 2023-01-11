@@ -5,9 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import fi.projectbirdnest.model.Drone;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,17 +14,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DroneService {
 
-    private final RestTemplate restTemplate;
+    private final DroneApi droneApi;
 
     public List<Drone> getDrones() throws JsonProcessingException {
-        String apiResponse = getDroneSnapshot();
-        return extractDroneList(apiResponse);
-    }
-
-    private String getDroneSnapshot() {
-        String uri = "http://assignments.reaktor.com/birdnest/drones";
-        ResponseEntity<String> response = this.restTemplate.getForEntity(uri, String.class);
-        return response.getBody();
+        String apiResponseBody = droneApi.getDrones().getBody();
+        return extractDroneList(apiResponseBody);
     }
 
     private List<Drone> extractDroneList(String droneReport) throws JsonProcessingException {

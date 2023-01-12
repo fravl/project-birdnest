@@ -1,6 +1,7 @@
 package fi.projectbirdnest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import fi.projectbirdnest.service.DroneApi;
 import fi.projectbirdnest.service.DroneService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,12 +16,9 @@ public class ProjectBirdnestApplication {
 
 	public static void main(String[] args) throws IOException {
 		SpringApplication.run(ProjectBirdnestApplication.class, args);
-		DroneService droneService = new DroneService(new RestTemplate());
+		DroneService droneService = new DroneService(new DroneApi(new RestTemplate()));
 		droneService.getDrones();
 	}
 
-	@Bean
-	public RestTemplate restTemplate(RestTemplateBuilder builder) {
-		return builder.build();
-	}
+
 }

@@ -3,13 +3,16 @@ package fi.projectbirdnest.model;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
 
+@Entity
 @AllArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
 public class Violation {
 
     @Id
@@ -21,7 +24,7 @@ public class Violation {
     private Pilot pilot;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "pilot_id", referencedColumnName = "pilot_id")
+    @JoinColumn(name = "drone_serial_number", referencedColumnName = "serial_number")
     private Drone drone;
 
     @Column(name = "last_seen")

@@ -1,6 +1,8 @@
 package fi.projectbirdnest.service;
 
 import fi.projectbirdnest.model.Drone;
+import fi.projectbirdnest.model.Violation;
+import fi.projectbirdnest.persistence.ViolationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -8,7 +10,13 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ViolationService {
 
-    private boolean droneIsInNoDroneZone(Drone drone){
+    private final ViolationRepository violationRepository;
+
+    private Violation createViolation(Violation violation){
+        return violationRepository.save(violation);
+    }
+
+    public boolean droneIsInNoDroneZone(Drone drone){
         double NEST_X = 250000;
         double NEST_Y = 250000;
         double distanceDroneToNest = calculateDistance(
@@ -21,6 +29,10 @@ public class ViolationService {
         return distanceDroneToNest < NDZ_RADIUS;
     }
 
+    /**
+     * Calculates the distance between two points on earth in meters.
+     * Uses Haversine formula, see https://en.wikipedia.org/wiki/Haversine_formula
+     */
     private double calculateDistance(double lat1, double long1,
                                             double lat2, double long2) {
 

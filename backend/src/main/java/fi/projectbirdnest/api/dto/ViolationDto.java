@@ -18,7 +18,7 @@ public class ViolationDto {
 
     public ViolationDto(Violation violation){
         this.id = violation.getId();
-        this.closestDistanceToNest = violation.getClosestDistanceToNest();
+        this.closestDistanceToNest = ((double) Math.round(violation.getClosestDistanceToNest()/10))/100;
         this.lastSeen = violation.getLastSeen();
         this.pilot = new PilotDto(violation.getPilot());
     }

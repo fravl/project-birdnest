@@ -11,7 +11,7 @@ import reactor.core.publisher.Sinks;
 
 @Service
 @RequiredArgsConstructor
-class TaskScheduler {
+class ViolationTaskScheduler {
     private final DroneService droneService;
     private final ViolationService violationService;
 

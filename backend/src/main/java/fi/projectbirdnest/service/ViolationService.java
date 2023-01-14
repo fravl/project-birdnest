@@ -12,15 +12,15 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class ViolationService {
+class ViolationService {
 
     private final PilotService pilotService;
     private final ViolationRepository violationRepository;
 
-    public ViolationsReport getViolationsReport(){
+    public ViolationReport getViolationReport(){
         Instant tenMinutesAgo = Instant.now().minus(10, ChronoUnit.MINUTES);
         List<Violation> violations = this.violationRepository.findByLastSeenGreaterThan(tenMinutesAgo);
-        return new ViolationsReport(tenMinutesAgo, violations);
+        return new ViolationReport(tenMinutesAgo, violations);
     }
 
     public void deleteOldViolations(){
@@ -28,7 +28,6 @@ public class ViolationService {
         violationRepository.findByLastSeenLessThan(tenMinutesAgo);
         violationRepository.deleteAll(violationRepository.findByLastSeenLessThan(tenMinutesAgo));
     }
-
 
     public void processDroneCapture(final DroneCapture droneCapture){
         for (Drone drone: droneCapture.getDroneList()) {

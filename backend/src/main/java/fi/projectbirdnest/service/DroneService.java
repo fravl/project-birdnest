@@ -19,7 +19,7 @@ class DroneService {
 
     private final DroneApi droneApi;
 
-    public DroneCapture fetchDrones() throws JsonProcessingException {
+    public DroneCapture fetchDroneCapture() throws JsonProcessingException {
         String apiResponseBody = droneApi.getDrones().getBody();
         return XmlResponseToDroneCapture(apiResponseBody);
     }

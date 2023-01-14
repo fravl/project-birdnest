@@ -2,21 +2,23 @@ package fi.projectbirdnest.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import fi.projectbirdnest.model.Drone;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class DroneService {
 
     private final DroneApi droneApi;
 
-    public List<Drone> getDrones() throws JsonProcessingException {
+    public List<Drone> fetchDrones() throws JsonProcessingException {
         String apiResponseBody = droneApi.getDrones().getBody();
         return extractDroneList(apiResponseBody);
     }

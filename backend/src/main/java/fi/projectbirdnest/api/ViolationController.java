@@ -1,26 +1,22 @@
 package fi.projectbirdnest.api;
 
-import org.springframework.http.codec.ServerSentEvent;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Flux;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.server.ServerRequest;
+import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Mono;
+import reactor.core.publisher.Sinks;
 
-import java.time.Duration;
-import java.time.LocalTime;
-
-@RestController
+@RequiredArgsConstructor
+@Component
 public class ViolationController {
 
-    @GetMapping("/stream-sse")
-    public Flux<ServerSentEvent<String>> streamEvents() {
-        return Flux.interval(Duration.ofSeconds(1))
-                .map(sequence -> ServerSentEvent.<String> builder()
-                        .id(String.valueOf(sequence))
-                        .event("periodic-event")
-                        .data("SSE - " + LocalTime.now().toString())
-                        .build());
+    private final Sinks.Many<String> violationSink;
+
+    public Mono<ServerResponse> getViolationStream(ServerRequest serverRequest) {
+        return ServerResponse.ok().contentType(MediaType.APPLICATION_NDJSON)
+                .body(violationSink.asFlux(), String.class).log();
     }
-
-
 
 }

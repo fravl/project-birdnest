@@ -4,19 +4,19 @@ import fi.projectbirdnest.model.Pilot;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+import java.util.Optional;
+
+@Service
 @RequiredArgsConstructor
 public class PilotService {
 
     private final DroneApi droneApi;
 
-    public Pilot getPilotInformation(String droneSerialNumber){
+    public Optional<Pilot> getPilotInformation(String droneSerialNumber){
         ResponseEntity<Pilot> apiResponse = this.droneApi.getPilotInformation(droneSerialNumber);
-        if(apiResponse.getStatusCode().is2xxSuccessful()){
-            return apiResponse.getBody();
-        }
-        return null;
+        return Optional.ofNullable(apiResponse.getBody());
     }
 
 

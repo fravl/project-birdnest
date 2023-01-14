@@ -1,51 +1,70 @@
 package fi.projectbirdnest.service;
 
 import fi.projectbirdnest.model.Drone;
+import fi.projectbirdnest.model.Pilot;
 import fi.projectbirdnest.model.Violation;
 import fi.projectbirdnest.persistence.ViolationRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Sinks;
 
-@Component
+import java.time.Instant;
+import java.util.Optional;
+
+@Service
 @RequiredArgsConstructor
 public class ViolationService {
 
+    private final PilotService pilotService;
     private final ViolationRepository violationRepository;
 
-    private Violation createViolation(Violation violation){
+    private final Sinks.Many<String> violationSink;
+
+
+    private Violation saveViolation(Violation violation){
         return violationRepository.save(violation);
     }
 
-    public boolean droneIsInNoDroneZone(Drone drone){
-        double NEST_X = 250000;
-        double NEST_Y = 250000;
-        double distanceDroneToNest = calculateDistance(
-                drone.getPositionX(),
-                drone.getPositionY(),
-                NEST_X,
-                NEST_Y
-        );
-        double NDZ_RADIUS = 100;
-        return distanceDroneToNest < NDZ_RADIUS;
+    private Optional<Violation> getByDroneSerialNumber(final String droneSerialNumber){
+        return violationRepository.findByDrone_SerialNumber(droneSerialNumber);
     }
 
-    /**
-     * Calculates the distance between two points on earth in meters.
-     * Uses Haversine formula, see https://en.wikipedia.org/wiki/Haversine_formula
-     */
-    private double calculateDistance(double lat1, double long1,
-                                            double lat2, double long2) {
+    public Optional<Violation> processDrone(final Drone drone){
+        final double distanceToNest = getDistanceToNest(drone);
+        if(isInNoDroneZone(distanceToNest)){
+            Optional<Violation> _violation = getByDroneSerialNumber(drone.getSerialNumber());
+            if(_violation.isPresent()){
+                Violation violation = _violation.get();
+                violation.setLastSeen(Instant.now());
+                violation.setClosestDistanceToNest(Math.min(violation.getClosestDistanceToNest(), distanceToNest));
+                violation.getDrone().setPositionX(drone.getPositionX());
+                violation.getDrone().setPositionY(drone.getPositionY());
 
-        double latDistance = Math.toRadians(lat1 - lat2);
-        double lngDistance = Math.toRadians(long1 - long2);
-
-        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-                * Math.sin(lngDistance / 2) * Math.sin(lngDistance / 2);
-
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-        double EARTH_RADIUS = 6371000;
-        return EARTH_RADIUS * c;
+                return Optional.of(saveViolation(violation));
+            }
+            Violation violation = new Violation();
+            Optional<Pilot> pilot = pilotService.getPilotInformation(drone.getSerialNumber());
+            violation.setPilot(pilot.orElse(null));
+            violation.setDrone(drone);
+            violation.setClosestDistanceToNest(distanceToNest);
+            violation.setLastSeen(Instant.now());
+            return Optional.of(saveViolation(violation));
+        }
+        return Optional.empty();
     }
+    
+    private boolean isInNoDroneZone(final double distanceToNest){
+        double NDZ_RADIUS = 100000;
+        return distanceToNest < NDZ_RADIUS;
+    }
+
+    private double getDistanceToNest(final Drone drone) {
+        final double NEST_X = 250000;
+        final double NEST_Y = 250000;
+        final double xDifference = NEST_X-drone.getPositionX();
+        final double yDifference = NEST_Y- drone.getPositionY();
+
+        return Math.sqrt(Math.pow(xDifference,2)+Math.pow(yDifference,2));
+    }
+
 }

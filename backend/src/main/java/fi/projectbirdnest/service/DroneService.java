@@ -2,10 +2,11 @@ package fi.projectbirdnest.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import fi.projectbirdnest.model.Drone;
+import fi.projectbirdnest.model.DroneCapture;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -14,20 +15,25 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class DroneService {
+class DroneService {
 
     private final DroneApi droneApi;
 
-    public List<Drone> fetchDrones() throws JsonProcessingException {
+    public DroneCapture fetchDrones() throws JsonProcessingException {
         String apiResponseBody = droneApi.getDrones().getBody();
-        return extractDroneList(apiResponseBody);
+        return XmlResponseToDroneCapture(apiResponseBody);
     }
 
-    private List<Drone> extractDroneList(String droneReport) throws JsonProcessingException {
-        XmlMapper objectMapper = new XmlMapper();
+    private DroneCapture XmlResponseToDroneCapture(String droneReport) throws JsonProcessingException {
+        XmlMapper objectMapper = Jackson2ObjectMapperBuilder.xml().build();
         JsonNode body = objectMapper.readTree(droneReport);
-        JsonNode drones = body.get("capture").get("drone");
-        return Arrays.asList(objectMapper.treeToValue(drones, Drone[].class));
+
+        Instant timestamp = Instant.parse(body.get("capture").get("snapshotTimestamp").asText());
+
+        JsonNode dronesJson = body.get("capture").get("drone");
+        List<Drone> droneList = Arrays.asList(objectMapper.treeToValue(dronesJson, Drone[].class));
+
+        return new DroneCapture(timestamp,droneList);
     }
 
 }

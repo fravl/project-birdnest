@@ -3,13 +3,12 @@ package fi.projectbirdnest.service;
 import fi.projectbirdnest.model.Pilot;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
-public class DroneApi {
+class DroneApi {
 
     private final RestTemplate restTemplate;
     private final String baseUri = "http://assignments.reaktor.com/birdnest";

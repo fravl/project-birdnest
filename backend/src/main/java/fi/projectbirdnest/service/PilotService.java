@@ -3,14 +3,13 @@ package fi.projectbirdnest.service;
 import fi.projectbirdnest.model.Pilot;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class PilotService {
+class PilotService {
 
     private final DroneApi droneApi;
 

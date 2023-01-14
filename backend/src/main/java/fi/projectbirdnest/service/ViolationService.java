@@ -1,14 +1,13 @@
 package fi.projectbirdnest.service;
 
-import fi.projectbirdnest.model.Drone;
-import fi.projectbirdnest.model.Pilot;
-import fi.projectbirdnest.model.Violation;
+import fi.projectbirdnest.model.*;
 import fi.projectbirdnest.persistence.ViolationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Sinks;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,39 +17,55 @@ public class ViolationService {
     private final PilotService pilotService;
     private final ViolationRepository violationRepository;
 
-    private final Sinks.Many<String> violationSink;
+    public ViolationsReport getViolationsReport(){
+        Instant tenMinutesAgo = Instant.now().minus(10, ChronoUnit.MINUTES);
+        List<Violation> violations = this.violationRepository.findByLastSeenGreaterThan(tenMinutesAgo);
+        return new ViolationsReport(tenMinutesAgo, violations);
+    }
+
+    public void deleteOldViolations(){
+        Instant tenMinutesAgo = Instant.now().minus(10, ChronoUnit.MINUTES);
+        violationRepository.findByLastSeenLessThan(tenMinutesAgo);
+        violationRepository.deleteAll(violationRepository.findByLastSeenLessThan(tenMinutesAgo));
+    }
 
 
-    private Violation saveViolation(Violation violation){
-        return violationRepository.save(violation);
+    public void processDroneCapture(final DroneCapture droneCapture){
+        for (Drone drone: droneCapture.getDroneList()) {
+
+            final double distanceToNest = getDistanceToNest(drone);
+
+            if(isInNoDroneZone(distanceToNest)){
+                Optional<Violation> _violation = getByDroneSerialNumber(drone.getSerialNumber());
+                Violation violation;
+
+                if(_violation.isPresent()){
+                    // Update Violation
+                    violation = _violation.get();
+                    violation.setLastSeen(droneCapture.getTimestamp());
+                    violation.setClosestDistanceToNest(Math.min(violation.getClosestDistanceToNest(), distanceToNest));
+                    violation.getDrone().setPositionX(drone.getPositionX());
+                    violation.getDrone().setPositionY(drone.getPositionY());
+                } else {
+                    // Create new Violation
+                    violation = new Violation();
+                    Optional<Pilot> pilot = pilotService.getPilotInformation(drone.getSerialNumber());
+                    violation.setPilot(pilot.orElse(null));
+                    violation.setDrone(drone);
+                    violation.setClosestDistanceToNest(distanceToNest);
+                    violation.setLastSeen(droneCapture.getTimestamp());
+                }
+                saveViolation(violation);
+            }
+        }
+    }
+
+    private void saveViolation(Violation violation){
+        violationRepository.save(violation);
     }
 
     private Optional<Violation> getByDroneSerialNumber(final String droneSerialNumber){
         return violationRepository.findByDrone_SerialNumber(droneSerialNumber);
-    }
-
-    public Optional<Violation> processDrone(final Drone drone){
-        final double distanceToNest = getDistanceToNest(drone);
-        if(isInNoDroneZone(distanceToNest)){
-            Optional<Violation> _violation = getByDroneSerialNumber(drone.getSerialNumber());
-            if(_violation.isPresent()){
-                Violation violation = _violation.get();
-                violation.setLastSeen(Instant.now());
-                violation.setClosestDistanceToNest(Math.min(violation.getClosestDistanceToNest(), distanceToNest));
-                violation.getDrone().setPositionX(drone.getPositionX());
-                violation.getDrone().setPositionY(drone.getPositionY());
-
-                return Optional.of(saveViolation(violation));
-            }
-            Violation violation = new Violation();
-            Optional<Pilot> pilot = pilotService.getPilotInformation(drone.getSerialNumber());
-            violation.setPilot(pilot.orElse(null));
-            violation.setDrone(drone);
-            violation.setClosestDistanceToNest(distanceToNest);
-            violation.setLastSeen(Instant.now());
-            return Optional.of(saveViolation(violation));
-        }
-        return Optional.empty();
     }
     
     private boolean isInNoDroneZone(final double distanceToNest){
@@ -66,5 +81,4 @@ public class ViolationService {
 
         return Math.sqrt(Math.pow(xDifference,2)+Math.pow(yDifference,2));
     }
-
 }

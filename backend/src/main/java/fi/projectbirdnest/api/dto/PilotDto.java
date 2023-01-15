@@ -2,7 +2,6 @@ package fi.projectbirdnest.api.dto;
 
 import fi.projectbirdnest.model.Pilot;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter

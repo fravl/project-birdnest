@@ -19,7 +19,7 @@ class ViolationService {
 
     public List<Violation> getRecentViolations(){
         Instant tenMinutesAgo = Instant.now().minus(10, ChronoUnit.MINUTES);
-        return this.violationRepository.findByLastSeenGreaterThanOrderByLastSeenDesc(tenMinutesAgo);
+        return this.violationRepository.findByLastSeenGreaterThanOrderByIdDesc(tenMinutesAgo);
     }
 
     public void deleteOldViolations(){

@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface ViolationRepository extends JpaRepository<Violation, Long> {
     Optional<Violation> findByDrone_SerialNumber(String serialNumber);
-    List<Violation> findByLastSeenGreaterThanOrderByLastSeenDesc(Instant instant);
+    List<Violation> findByLastSeenGreaterThanOrderByIdDesc(Instant instant);
     List<Violation> findByLastSeenLessThan(Instant instant);
 }

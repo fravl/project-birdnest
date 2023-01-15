@@ -6,10 +6,12 @@ import fi.projectbirdnest.api.dto.ViolationReportDto;
 import fi.projectbirdnest.model.ViolationReport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Sinks;
 
@@ -23,7 +25,7 @@ public class ViolationRequestHandler {
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json().build();
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-        return ServerResponse.ok().contentType(MediaType.APPLICATION_NDJSON)
+        return ServerResponse.ok().contentType(MediaType.TEXT_EVENT_STREAM)
                 .body(violationSink.asFlux().map(ViolationReportDto::new), ViolationReportDto.class).log();
     }
 

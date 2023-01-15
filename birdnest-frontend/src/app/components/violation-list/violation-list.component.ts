@@ -12,5 +12,14 @@ export class ViolationListComponent {
   violationReport$: Observable<ViolationReport> =
     this.violationService.getServerSentEvent();
 
+  displayedColumns: string[] = [
+    'lastSeen',
+    'firstName',
+    'lastName',
+    'phone',
+    'email',
+    'closestDistanceToNest',
+  ];
+
   constructor(private violationService: ViolationService) {}
 }

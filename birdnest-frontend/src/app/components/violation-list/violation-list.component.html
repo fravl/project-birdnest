@@ -1,4 +1,36 @@
 <p>{{ (violationReport$ | async)?.droneCaptureTimestamp }}</p>
-<div *ngFor="let violation of (violationReport$ | async)?.violations">
-  {{ violation.id }}
-</div>
+<mat-table
+  #table
+  [dataSource]="(violationReport$ | async)?.violations!"
+  class="mat-elevation-z8"
+>
+  <ng-container matColumnDef="lastSeen">
+    <th mat-header-cell *matHeaderCellDef>Last seen</th>
+    <td mat-cell *matCellDef="let element">{{ element.lastSeen }}</td>
+  </ng-container>
+  <ng-container matColumnDef="firstName">
+    <th mat-header-cell *matHeaderCellDef>First Name</th>
+    <td mat-cell *matCellDef="let element">{{ element.pilot.firstName }}</td>
+  </ng-container>
+  <ng-container matColumnDef="lastName">
+    <th mat-header-cell *matHeaderCellDef>Last Name</th>
+    <td mat-cell *matCellDef="let element">{{ element.pilot.lastName }}</td>
+  </ng-container>
+  <ng-container matColumnDef="phone">
+    <th mat-header-cell *matHeaderCellDef>Phone</th>
+    <td mat-cell *matCellDef="let element">{{ element.pilot.phoneNumber }}</td>
+  </ng-container>
+  <ng-container matColumnDef="email">
+    <th mat-header-cell *matHeaderCellDef>Email</th>
+    <td mat-cell *matCellDef="let element">{{ element.pilot.email }}</td>
+  </ng-container>
+  <ng-container matColumnDef="closestDistanceToNest">
+    <th mat-header-cell *matHeaderCellDef>Distance to nest</th>
+    <td mat-cell *matCellDef="let element">
+      {{ element.closestDistanceToNest + "m" }}
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</mat-table>

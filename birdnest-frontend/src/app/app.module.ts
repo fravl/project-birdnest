@@ -7,9 +7,10 @@ import { MatTableModule } from '@angular/material/table';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ViolationListComponent } from './components/violation-list/violation-list.component';
+import { DateToTimeStringPipe } from './pipes/date-to-time-string.pipe';
 
 @NgModule({
-  declarations: [AppComponent, ViolationListComponent],
+  declarations: [AppComponent, ViolationListComponent, DateToTimeStringPipe],
   imports: [
     BrowserModule,
     AppRoutingModule,

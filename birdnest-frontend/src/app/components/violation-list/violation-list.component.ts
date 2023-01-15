@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ViolationReport } from 'src/app/models/violation-report.model';
 import { ViolationService } from 'src/app/services/violation.service';
@@ -9,7 +9,8 @@ import { ViolationService } from 'src/app/services/violation.service';
   styleUrls: ['./violation-list.component.css'],
 })
 export class ViolationListComponent {
-  @Input() violationReport: ViolationReport = {} as ViolationReport;
+  violationReport$: Observable<ViolationReport> =
+    this.violationService.getServerSentEvent();
 
-  constructor() {}
+  constructor(private violationService: ViolationService) {}
 }

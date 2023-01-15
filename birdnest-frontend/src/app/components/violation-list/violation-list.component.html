@@ -1,1 +1,4 @@
-<p>{{ violationReport.droneCaptureTimestamp }}</p>
+<p>{{ (violationReport$ | async)?.droneCaptureTimestamp }}</p>
+<div *ngFor="let violation of (violationReport$ | async)?.violations">
+  {{ violation.id }}
+</div>

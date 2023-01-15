@@ -9,6 +9,6 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 public class ViolationReport {
-    private Instant timestamp;
+    private Instant droneCaptureTimestamp;
     private List<Violation> violations;
 }

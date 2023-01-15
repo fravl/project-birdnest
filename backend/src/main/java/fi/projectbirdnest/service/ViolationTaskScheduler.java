@@ -2,11 +2,14 @@ package fi.projectbirdnest.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import fi.projectbirdnest.model.DroneCapture;
+import fi.projectbirdnest.model.Violation;
 import fi.projectbirdnest.model.ViolationReport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Sinks;
+
+import java.util.List;
 
 
 @Service
@@ -21,9 +24,9 @@ class ViolationTaskScheduler {
     public void fetchAndProcessDroneCapture() throws JsonProcessingException {
         DroneCapture droneCapture = this.droneService.fetchDroneCapture();
         violationService.processDroneCapture(droneCapture);
-        ViolationReport violationReport = this.violationService.getViolationReport();
+        List<Violation> recentViolations = this.violationService.getRecentViolations();
 
-        violationSink.tryEmitNext(violationReport);
+        violationSink.tryEmitNext(new ViolationReport(droneCapture.getTimestamp(), recentViolations));
     }
 
     @Scheduled(fixedRate = 10000)

@@ -22,9 +22,6 @@ public class ViolationRequestHandler {
     private final Sinks.Many<ViolationReport> violationSink;
 
     public Mono<ServerResponse> getViolationStream(ServerRequest serverRequest) {
-        ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json().build();
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
         return ServerResponse.ok().contentType(MediaType.TEXT_EVENT_STREAM)
                 .body(violationSink.asFlux().map(ViolationReportDto::new), ViolationReportDto.class).log();
     }

@@ -11,7 +11,7 @@ public class CorsConfig implements WebFluxConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry corsRegistry) {
         corsRegistry.addMapping("/violations")
-                .allowedOrigins("*")
+                .allowedOrigins("https://birdnest-frontend1.herokuapp.com")
                 .allowedMethods("GET")
                 .maxAge(3600);
     }

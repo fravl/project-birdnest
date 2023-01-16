@@ -13,9 +13,16 @@ public class PilotDto {
     private String email;
 
     public PilotDto(Pilot pilot){
-        this.firstName = pilot.getFirstName();
-        this.lastName = pilot.getLastName();
-        this.phoneNumber = pilot.getPhoneNumber();
-        this.email = pilot.getEmail();
+        if(pilot != null) {
+            this.firstName = pilot.getFirstName();
+            this.lastName = pilot.getLastName();
+            this.phoneNumber = pilot.getPhoneNumber();
+            this.email = pilot.getEmail();
+        } else {
+            this.firstName = "Unknown";
+            this.lastName = "Pilot";
+            this.phoneNumber = "-";
+            this.email = "-";
+        }
     }
 }

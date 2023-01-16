@@ -1,5 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { ViolationReport } from '../models/violation-report.model';
 import { SseService } from './sse.service';
 
@@ -7,7 +8,7 @@ import { SseService } from './sse.service';
   providedIn: 'root',
 })
 export class ViolationService {
-  private readonly url = 'http://localhost:8080/violations';
+  private readonly url = environment.baseUrl + 'violations';
 
   constructor(private _zone: NgZone, private _sseService: SseService) {}
 

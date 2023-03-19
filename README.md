@@ -1,9 +1,9 @@
 # Project Birdnest
 ## Task
-This small web-application is a solution to the pre-assignment for the Reaktor Summer Internship 2023. The task for this assignment was to track violations of a supposed 100m meter no-drone-zone around a fictitious birdnest. The necessary data is supplied by Reaktor via two external APIs:
+This small web-application is a solution to the pre-assignment for the Reaktor Summer Internship 2023. The task for this assignment was to track violations of a supposed 100 meter no-drone-zone around a fictitious birdnest. The necessary data is supplied by Reaktor via two external APIs:
 
 <b>Drone positions:</b> GET assignments.reaktor.com/birdnest/drones
-</br>Publishes drone positions in a 500m radius around the birdnest every two seconds.
+</br>Publishes drone positions in a 500 meter radius around the birdnest every two seconds.
 
 <b>Pilot information:</b> GET assignments.reaktor.com/birdnest/pilots/:serialNumber
 </br>Exposes personal details of drone pilots

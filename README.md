@@ -11,9 +11,6 @@ This small web-application is a solution to the pre-assignment for the Reaktor S
 The app consists of an Angular frontend and a Springboot backend with an H2 in-memory database. The backend continuously fetches the newest drone positions and persists the contact details of NDZ violators. Then, the backend emits a Server-Sent-Event (SSE) containing a list of violators of the last 10 minutes. The frontend listens to the SSE and displays the data in a list. With this implementation, the frontend is a passive receiver of data.
 
 
-
-Deployed at https://birdnest-frontend1.herokuapp.com/ (if no data is displayed, Reaktor might have shut down their APIs)
-
 ## Demo
 ![](https://github.com/fravl/project-birdnest/blob/main/project-birdnest-demo.gif)
 
